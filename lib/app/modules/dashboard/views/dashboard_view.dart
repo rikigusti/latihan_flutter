@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../data/headline_response.dart';
+import '../../home/views/home_view.dart';
 import '../controllers/dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -13,6 +15,7 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     DashboardController controller = Get.put(DashboardController());
     final ScrollController scrollController = ScrollController();
+    final auth = GetStorage();
     return SafeArea(
       // Widget SafeArea menempatkan semua konten widget ke dalam area yang aman (safe area) dari layar.
       child: DefaultTabController(
@@ -33,10 +36,9 @@ class DashboardView extends GetView<DashboardController> {
                     textAlign: TextAlign.end,
                     // Properti textAlign digunakan untuk menentukan perataan teks.
                   ),
-                  subtitle: const Text(
-                    "Agung Wahyudi",
+                  subtitle: Text(
+                    auth.read('full_name').toString(),
                     textAlign: TextAlign.end,
-                    // Properti textAlign digunakan untuk menentukan perataan teks.
                   ),
                   trailing: Container(
                     // Widget Container digunakan untuk mengatur tampilan konten dalam kotak.
@@ -81,6 +83,14 @@ class DashboardView extends GetView<DashboardController> {
           body: TabBarView(children: [
             headline(controller, scrollController),
           ]),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              await auth.erase();
+              Get.offAll(() => const HomeView());
+            },
+            backgroundColor: Colors.redAccent,
+            child: const Icon(Icons.logout_rounded),
+          ),
         ),
       ),
     );
